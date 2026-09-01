@@ -11,7 +11,7 @@ export default function LandingPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [specFilter, setSpecFilter] = useState('Corporate');
   const [distFilter, setDistFilter] = useState('Dhaka');
-  const { switchRole } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,7 +77,13 @@ export default function LandingPage() {
                 Find a Lawyer
               </Link>
               <button 
-                onClick={() => { switchRole('lawyer'); navigate('/lawyer/requests'); }}
+                onClick={() => {
+                  if (user?.role === 'lawyer') {
+                    navigate('/lawyer/requests');
+                  } else {
+                    navigate('/login');
+                  }
+                }}
                 className="btn-outline px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2"
               >
                 <span className="material-symbols-rounded text-[18px]">gavel</span>
