@@ -87,6 +87,7 @@ try {
      * Check with exclusive row lock (FOR UPDATE) whether this lawyer already has
      * an active appointment ('pending' or 'accepted') at the exact date and time.
      */
+    $for_update = ($db_driver === 'mysql') ? ' FOR UPDATE' : '';
     $conflict_sql = "
         SELECT id, client_id, status, appointment_date, appointment_time
         FROM appointments
@@ -94,7 +95,7 @@ try {
           AND appointment_date = :appointment_date
           AND appointment_time = :appointment_time
           AND status IN ('pending', 'accepted')
-        FOR UPDATE
+        {$for_update}
     ";
     $conflict_stmt = $pdo->prepare($conflict_sql);
     $conflict_stmt->execute([
@@ -113,7 +114,7 @@ try {
     // Insert new appointment record
     $insert_sql = "
         INSERT INTO appointments (client_id, lawyer_id, appointment_date, appointment_time, case_description, status, created_at, updated_at)
-        VALUES (:client_id, :lawyer_id, :appointment_date, :appointment_time, :case_description, 'pending', NOW(), NOW())
+        VALUES (:client_id, :lawyer_id, :appointment_date, :appointment_time, :case_description, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     ";
     $insert_stmt = $pdo->prepare($insert_sql);
     $insert_stmt->execute([
