@@ -45,12 +45,13 @@ try {
         }
 
         // Upcoming appointments count (today or future dates)
+        $today_filter = ($db_driver === 'sqlite') ? "DATE('now')" : "CURDATE()";
         $upcoming_stmt = $pdo->prepare("
             SELECT COUNT(*) as upcoming_count
             FROM appointments
             WHERE lawyer_id = :lawyer_id
               AND status IN ('pending', 'accepted')
-              AND appointment_date >= CURDATE()
+              AND appointment_date >= {$today_filter}
         ");
         $upcoming_stmt->execute([':lawyer_id' => $lawyer_id]);
         $upcoming = (int)$upcoming_stmt->fetchColumn();
@@ -89,10 +90,10 @@ try {
         $total_appointments = (int)$pdo->query("SELECT COUNT(*) FROM appointments")->fetchColumn();
 
         // Upcoming appointments this week
-        $this_week = (int)$pdo->query("
-            SELECT COUNT(*) FROM appointments
-            WHERE appointment_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-        ")->fetchColumn();
+        $week_query = ($db_driver === 'sqlite') 
+            ? "SELECT COUNT(*) FROM appointments WHERE appointment_date BETWEEN DATE('now') AND DATE('now', '+7 days')"
+            : "SELECT COUNT(*) FROM appointments WHERE appointment_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)";
+        $this_week = (int)$pdo->query($week_query)->fetchColumn();
 
         // Status breakdown
         $status_stmt = $pdo->query("

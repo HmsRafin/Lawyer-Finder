@@ -85,6 +85,7 @@ try {
         }
 
         // Check for double booking conflict for this lawyer (excluding current appointment)
+        $for_update = ($db_driver === 'mysql') ? ' FOR UPDATE' : '';
         $conflict_stmt = $pdo->prepare("
             SELECT id FROM appointments
             WHERE lawyer_id = :lawyer_id
@@ -92,7 +93,7 @@ try {
               AND appointment_time = :target_time
               AND id != :current_id
               AND status IN ('pending', 'accepted')
-            FOR UPDATE
+            {$for_update}
         ");
         $conflict_stmt->execute([
             ':lawyer_id' => $lawyer_id,
@@ -118,7 +119,7 @@ try {
             appointment_date = :appointment_date,
             appointment_time = :appointment_time,
             cancellation_reason = :cancellation_reason,
-            updated_at = NOW()
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = :id
     ");
     $update_stmt->execute([

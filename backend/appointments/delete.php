@@ -45,7 +45,7 @@ try {
         SET
             status = 'cancelled',
             cancellation_reason = :reason,
-            updated_at = NOW()
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = :id
     ");
     $stmt->execute([
