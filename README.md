@@ -134,6 +134,32 @@ Lawyear/
 
 ---
 
+## ⚡ Advanced SQL Queries Catalog (`advanced_queries.sql`)
+
+All queries are documented in `backend/database/advanced_queries.sql` and executable live via API `backend/analytics/queries.php` or through the **Interactive SQL Query Lab** on the Admin Dashboard (`/admin/dashboard`):
+
+1. **JOINs**:
+   - `INNER JOIN`: Matched records between `appointments`, `users` (clients), and `lawyers`.
+   - `LEFT JOIN`: All clients with their appointment history (including users with 0 bookings).
+   - `RIGHT JOIN`: All lawyers with assigned appointments (preserving unassigned lawyers).
+   - `FULL OUTER JOIN`: Universal outer match via UNION of Left and Right joins.
+   - `NULL / ANTI-JOIN`: Finding unassigned lawyers (`LEFT JOIN ... WHERE appointment.id IS NULL`).
+2. **Set Operations**:
+   - `UNION`: Consolidated contact directory across Clients and Lawyers.
+   - `INTERSECTION`: Finding overlapping districts with high-fee advocates and active appointments.
+   - `DIFFERENCE / EXCEPT`: Identifying districts with registered advocates but zero booked consultations.
+3. **Aggregate Functions & Division**:
+   - `COUNT`, `SUM`, `AVG`, `MIN`, `MAX` grouped by legal specialization.
+   - `Mathematical Division`: Revenue share percentage per legal specialization.
+   - `Relational Division`: Identifying lawyers who have handled cases across **all distinct appointment statuses** using `HAVING COUNT(DISTINCT ...) = (SELECT COUNT(DISTINCT ...))`.
+4. **Subqueries & CTEs**:
+   - `Scalar Subquery`: Lawyers charging higher than the platform average consultation fee.
+   - `Correlated Subquery (EXISTS)`: Clients with active/completed bookings.
+   - `Derived Table (Subquery in FROM)`: Performance tier classification (Senior / Veteran / Associate).
+   - `CTE (WITH ... AS)`: Full completion rate analytics and revenue performance metrics.
+
+---
+
 ## 👥 Seed Test Accounts
 
 All accounts use the password: `password123`
@@ -147,3 +173,4 @@ All accounts use the password: `password123`
 | **Admin** | System Admin | `admin@lawyerfinder.com` | `Admin Dashboard` (`/admin/dashboard`) |
 
 > **Pro-tip:** Use the **Role Switcher** pill in the top navigation bar to switch between Client, Lawyer, and Admin views with one click!
+

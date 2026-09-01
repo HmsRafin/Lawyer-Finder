@@ -48,7 +48,7 @@ try {
 
     $user_stmt = $pdo->prepare("
         INSERT INTO users (name, email, password_hash, role, phone, created_at)
-        VALUES (:name, :email, :password_hash, :role, :phone, NOW())
+        VALUES (:name, :email, :password_hash, :role, :phone, CURRENT_TIMESTAMP)
     ");
     $user_stmt->execute([
         ':name' => $name,
